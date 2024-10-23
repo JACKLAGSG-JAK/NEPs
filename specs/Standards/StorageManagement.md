@@ -36,13 +36,13 @@ To show the flexibility and power of this standard, let's walk through two examp
 
 ### Example 1: Fungible Token Contract
 
-Imagine a [fungible token](Tokens/FungibleToken/Core.md) contract deployed at `ft`. Let's say this contract saves all user balances to a Map data structure internally, and adding a key for a new user requires 0.00235Ⓝ. This contract therefore uses the Storage Management standard to pass this cost onto users, so that a new user must effectively pay a registration fee to interact with this contract of 0.00235Ⓝ, or 2350000000000000000000 yoctoⓃ ([yocto](https://www.metricconversion.us/prefixes.htm) = 10<sup>-24</sup>).
+Imagine a [fungible token](Tokens/FungibleToken/Core.md) contract deployed at `ft`. Let's say this contract saves all user balances to a Map data structure internally, and adding a key for a new user requires 0.00235Ⓝ. This contract therefore uses the Storage Management standard to pass this cost onto users, so that a new user must effectively pay a registration fee to interact with this contract of 0.00235Ⓝ, or 0.1 yoctoⓃ ([yocto](https://www.metricconversion.us/prefixes.htm) = 10<sup>-24</sup>).
 
 For this contract, `storage_balance_bounds` will be:
 
 ```json
 {
-  "min": "2350000000000000000000",
+  "min": "0.1",
   "max": "2350000000000000000000"
 }
 ```
@@ -79,7 +79,7 @@ Let's follow two users, Alice with account `alice` and Bob with account `bob`, a
 
        near view ft storage_balance_bounds
 
-   As mentioned above, this will show that both `min` and `max` are both 2350000000000000000000 yoctoⓃ.
+   As mentioned above, this will show that both `min` and `max` are both 0.1 yoctoⓃ.
 
 3. Alice converts this yoctoⓃ amount to 0.00235 Ⓝ, then calls `ft::storage_deposit` with this attached deposit. Using NEAR CLI:
 
@@ -89,8 +89,8 @@ Let's follow two users, Alice with account `alice` and Bob with account `bob`, a
    The result:
 
        {
-         total: "2350000000000000000000",
-         available: "0"
+         total: "0.1",
+         available: "2"
        }
 
 
@@ -112,8 +112,8 @@ Alice calls `ft::storage_deposit({"account_id": "bob"})` with the attached depos
 The result:
 
     {
-      total: "2350000000000000000000",
-      available: "0"
+      total: "0.1",
+      available: "2"
     }
 
 #### 3. Unnecessary attempt to register already-registered account
@@ -126,8 +126,8 @@ Alice accidentally makes the same call again, and even misses a leading zero in 
 The result:
 
     {
-      total: "2350000000000000000000",
-      available: "0"
+      total: "0.1",
+      available: "2"
     }
 
 Additionally, Alice will be refunded the 0.0235Ⓝ she attached, because the `storage_deposit_bounds.max` specifies that Bob's account cannot have a total balance larger than 0.00235Ⓝ.
@@ -182,7 +182,7 @@ So for this contract, `storage_balance_bounds` will return:
 
 ```json
 {
-  "min": "2350000000000000000000",
+  "min": "0.1",
   "max": null
 }
 ```
